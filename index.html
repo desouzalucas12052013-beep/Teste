@@ -1376,3 +1376,660 @@ document.getElementById("lucro").innerHTML=
 
 
 </html>
+
+<div id="vendas" class="tela">
+
+
+<div class="card">
+
+
+<h2>🛒 Venda</h2>
+
+
+<select id="clienteVenda"></select>
+
+
+<select id="perfumeVenda"></select>
+
+
+<input id="qtdVenda" type="number" placeholder="Quantidade">
+
+
+<button onclick="vender()">
+
+Finalizar Venda
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div id="calendario" class="tela">
+
+
+<div class="card">
+
+
+<h2>📅 Pagamentos 2026</h2>
+
+
+<div id="meses">
+
+
+<button onclick="mostrarMes(1)">Jan</button>
+
+<button onclick="mostrarMes(2)">Fev</button>
+
+<button onclick="mostrarMes(3)">Mar</button>
+
+<button onclick="mostrarMes(4)">Abr</button>
+
+<button onclick="mostrarMes(5)">Mai</button>
+
+<button onclick="mostrarMes(6)">Jun</button>
+
+<button onclick="mostrarMes(7)">Jul</button>
+
+<button onclick="mostrarMes(8)">Ago</button>
+
+<button onclick="mostrarMes(9)">Set</button>
+
+<button onclick="mostrarMes(10)">Out</button>
+
+<button onclick="mostrarMes(11)">Nov</button>
+
+<button onclick="mostrarMes(12)">Dez</button>
+
+
+</div>
+
+
+<div id="cal"></div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div id="promo" class="tela">
+
+
+<div class="card">
+
+
+<h2>🎁 Promoções e Brindes</h2>
+
+
+<input id="promoNome" placeholder="Promoção">
+
+
+<input id="promoValor" placeholder="Valor">
+
+
+<input id="promoBrinde" placeholder="Brinde">
+
+
+
+<button onclick="addPromo()">
+
+Salvar
+
+</button>
+
+
+<div id="listaPromo"></div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div id="relatorio" class="tela">
+
+
+<div class="card">
+
+
+<h2>📊 Relatórios</h2>
+
+
+<h3>🏆 Ranking vendas</h3>
+
+<div id="ranking"></div>
+
+
+<h3>💰 Mais lucrativos</h3>
+
+<div id="lucros"></div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<script>
+
+
+const firebaseConfig = {
+
+
+apiKey:"AIzaSyDRDC38Z-gln6hAvK4xtkAYij5_M2TvYRk",
+
+authDomain:"dafer-2d4af.firebaseapp.com",
+
+projectId:"dafer-2d4af",
+
+storageBucket:"dafer-2d4af.firebasestorage.app",
+
+messagingSenderId:"1043309416391",
+
+appId:"1:1043309416391:web:477f1eb8681cf5428c93e2"
+
+
+};
+
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+const db=firebase.firestore();
+
+
+
+
+
+let perfumes=[];
+
+let clientes=[];
+
+
+
+
+
+
+function abrir(id){
+
+
+document.querySelectorAll(".tela")
+
+.forEach(x=>x.classList.remove("ativa"));
+
+
+document.getElementById(id)
+
+.classList.add("ativa");
+
+
+}
+
+
+
+
+
+
+
+function dataBR(data){
+
+
+if(!data)return "-";
+
+
+let d=new Date(data);
+
+
+return d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear();
+
+
+}
+
+
+
+
+
+
+
+
+// PRODUTOS
+
+
+function addPerfume(){
+
+
+let nomeP=nome.value;
+
+
+
+db.collection("perfumes")
+
+.where("nome","==",nomeP)
+
+.get()
+
+.then(s=>{
+
+
+
+if(!s.empty){
+
+
+
+s.forEach(doc=>{
+
+
+let p=doc.data();
+
+
+
+db.collection("perfumes")
+
+.doc(doc.id)
+
+.update({
+
+
+estoque:p.estoque+Number(estoque.value)
+
+
+});
+
+
+
+});
+
+
+
+}else{
+
+
+db.collection("perfumes").add({
+
+
+nome:nomeP,
+
+compra:Number(compra.value),
+
+venda:Number(venda.value),
+
+estoque:Number(estoque.value),
+
+genero:genero.value,
+
+vendidos:0
+
+
+});
+
+
+
+}
+
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+db.collection("perfumes")
+
+.onSnapshot(s=>{
+
+
+perfumes=[];
+
+
+listaProdutos.innerHTML="";
+
+
+let est=0;
+
+
+s.forEach(d=>{
+
+
+let p={id:d.id,...d.data()};
+
+
+perfumes.push(p);
+
+
+est+=p.estoque;
+
+
+
+listaProdutos.innerHTML+=`
+
+
+<tr>
+
+
+<td>${p.nome}</td>
+
+<td>${p.genero}</td>
+
+<td>R$ ${p.compra}</td>
+
+<td>R$ ${p.venda}</td>
+
+<td>R$ ${p.venda-p.compra}</td>
+
+<td>${p.estoque}</td>
+
+
+<td>
+
+<button class="delete"
+
+onclick="del('perfumes','${p.id}')">
+
+X
+
+</button>
+
+
+</td>
+
+
+</tr>
+
+
+`;
+
+
+
+perfumeVenda.innerHTML+=`
+
+<option value="${p.id}">
+
+${p.nome}
+
+</option>`;
+
+
+});
+
+
+
+totalEstoque.innerHTML=est;
+
+
+});
+
+
+
+
+
+
+
+
+
+// CLIENTES
+
+
+function addCliente(){
+
+
+db.collection("clientes").add({
+
+
+nome:nomeC.value,
+
+telefone:telefone.value,
+
+parcelas:Number(parcelas.value),
+
+divida:Number(divida.value),
+
+data:dataPagamento.value
+
+
+});
+
+
+}
+
+
+
+
+db.collection("clientes")
+
+.onSnapshot(s=>{
+
+
+clientes=[];
+
+
+listaClientes.innerHTML="";
+
+
+clienteVenda.innerHTML="";
+
+
+
+s.forEach(d=>{
+
+
+let c={id:d.id,...d.data()};
+
+
+clientes.push(c);
+
+
+
+listaClientes.innerHTML+=`
+
+
+<tr>
+
+
+<td>${c.nome}</td>
+
+
+<td>R$${c.divida}</td>
+
+
+<td>${c.parcelas}</td>
+
+
+<td>${dataBR(c.data)}</td>
+
+
+</tr>
+
+
+
+`;
+
+
+
+clienteVenda.innerHTML+=`
+
+<option value="${c.id}">
+
+${c.nome}
+
+</option>`;
+
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+// VENDA
+
+
+function vender(){
+
+
+
+let p=perfumes.find(x=>x.id==perfumeVenda.value);
+
+
+let q=Number(qtdVenda.value);
+
+
+
+if(!p)return;
+
+
+
+db.collection("perfumes")
+
+.doc(p.id)
+
+.update({
+
+
+estoque:p.estoque-q,
+
+vendidos:(p.vendidos||0)+q
+
+
+});
+
+
+
+
+db.collection("vendas").add({
+
+
+produto:p.nome,
+
+valor:p.venda*q,
+
+lucro:(p.venda-p.compra)*q,
+
+data:new Date()
+
+
+});
+
+
+}
+
+
+
+
+
+
+
+// LEMBRETES
+
+
+function addLembrete(){
+
+
+db.collection("lembretes").add({
+
+
+texto:textoLembrete.value,
+
+data:dataLembrete.value
+
+
+});
+
+
+}
+
+
+
+
+db.collection("lembretes")
+
+.onSnapshot(s=>{
+
+
+lembretes.innerHTML="";
+
+
+s.forEach(d=>{
+
+
+lembretes.innerHTML+=`
+
+
+<p>
+
+🔔 ${d.data().texto}
+
+<br>
+
+📅 ${dataBR(d.data().data)}
+
+<button onclick="del('lembretes','${d.id}')">
+
+X
+
+</button>
+
+</p>
+
+
+`;
+
+
+
+});
+
+
+});
+
+
+
+
+
+
+function del(col,id){
+
+
+db.collection(col).doc(id).delete();
+
+
+}
