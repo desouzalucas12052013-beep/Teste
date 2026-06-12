@@ -1,870 +1,1789 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
+
 
 <head>
 
+
+
 <meta charset="UTF-8">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dafer Parfum</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<title>Dafer Parfum Pro</title>
+
+
+
+
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+
+
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+
+
+
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
+
 
 body{
+
+margin:0;
+
+font-family:Arial;
+
 background:#ffe5f1;
-display:flex;
-min-height:100vh;
+
+padding:10px;
+
 }
 
-.sidebar{
-width:260px;
-background:linear-gradient(
-180deg,
-#8d3a68,
-#5f2345
-);
-padding:25px;
-color:white;
-position:fixed;
-height:100%;
+
+
+h2{
+
+font-size:18px;
+
 }
 
-.logo{
-text-align:center;
-margin-bottom:35px;
-}
 
-.logo h1{
-font-size:32px;
-}
 
-.logo p{
-opacity:.8;
-}
+.section,.totalBox{
 
-.menu{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
 
-.menu button{
-background:rgba(255,255,255,.1);
-border:none;
-color:white;
-padding:15px;
-border-radius:12px;
-cursor:pointer;
-font-size:15px;
-transition:.3s;
-}
 
-.menu button:hover{
-background:rgba(255,255,255,.2);
-}
+background:#fff;
 
-.main{
-margin-left:260px;
-width:100%;
-padding:25px;
-}
-
-.cards{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-margin-bottom:20px;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:20px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.card h3{
-color:#777;
-font-size:14px;
-}
-
-.card h1{
-color:#8d3a68;
-margin-top:10px;
-}
-
-.section{
-background:white;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.section h2{
-margin-bottom:15px;
-color:#8d3a68;
-}
-
-input,
-select{
-width:100%;
 padding:12px;
-margin-top:10px;
-border:1px solid #ddd;
-border-radius:10px;
+
+margin-bottom:12px;
+
+border-radius:12px;
+
+box-shadow:0 5px 12px rgba(0,0,0,.08);
+
+
+
 }
 
-button.btn{
-background:#8d3a68;
-color:white;
-border:none;
-padding:12px 20px;
-margin-top:15px;
-border-radius:10px;
-cursor:pointer;
+
+
+
+
+input,select{
+
+
+
+width:100%;
+
+padding:12px;
+
+margin-top:6px;
+
+border-radius:8px;
+
+border:1px solid #ddd;
+
+
+
 }
+
+
+
+
+
+button{
+
+
+
+background:#8d3a68;
+
+color:white;
+
+border:0;
+
+padding:12px;
+
+margin-top:8px;
+
+border-radius:8px;
+
+width:100%;
+
+
+
+}
+
+
+
+
+
+.delete{
+
+
+
+background:#b00020;
+
+
+
+}
+
+
+
+
+
+.tableBox{
+
+
+
+overflow-x:auto;
+
+
+
+}
+
+
+
+
 
 table{
+
+
+
 width:100%;
+
 border-collapse:collapse;
+
+margin-top:10px;
+
+min-width:600px;
+
+
+
 }
+
+
+
+
 
 th{
+
+
+
 background:#8d3a68;
+
 color:white;
-padding:12px;
+
+padding:8px;
+
+
+
 }
+
+
+
+
 
 td{
-padding:12px;
+
+
+
+padding:8px;
+
 border-bottom:1px solid #eee;
+
+
+
 }
 
-.badge{
-background:#ffd4e7;
-padding:6px 12px;
-border-radius:20px;
-font-weight:600;
-color:#8d3a68;
+
+
+
+
+.devedor{
+
+
+
+color:red;
+
+font-weight:bold;
+
+
+
 }
+
+
+
+
+
+.ok{
+
+
+
+color:green;
+
+font-weight:bold;
+
+
+
+}
+
+
 
 </style>
 
+
+
+
+
 </head>
+
+
+
+
 
 <body>
 
-<div class="sidebar">
 
-<div class="logo">
-<h1>🌸 Dafer</h1>
-<p>Parfum</p>
-</div>
 
-<div class="menu">
 
-<button>📊 Dashboard</button>
 
-<button>📦 Perfumes</button>
+<div class="totalBox">
 
-<button>👥 Clientes</button>
 
-<button>💰 Vendas</button>
 
-<button>📜 Histórico</button>
+<h2>📊 TOTAL</h2>
 
-</div>
 
-</div>
 
-<div class="main">
+<p>💰 Faturado:
 
-<div class="cards">
+<b id="totalFaturado">R$ 0</b>
 
-<div class="card">
-<h3>Perfumes</h3>
-<h1 id="totalPerfumes">0</h1>
-</div>
+</p>
 
-<div class="card">
-<h3>Clientes</h3>
-<h1 id="totalClientes">0</h1>
-</div>
 
-<div class="card">
-<h3>Vendidos</h3>
-<h1 id="totalVendidos">0</h1>
-</div>
 
-<div class="card">
-<h3>Estoque</h3>
-<h1 id="totalEstoque">0</h1>
-</div>
+
+
+<p>📈 Lucro:
+
+<b id="totalLucro">R$ 0</b>
+
+</p>
+
+
+
+
+
+<p>⛪ Dízimo:
+
+<b id="totalDizimo">R$ 0</b>
+
+</p>
+
+
+
+
 
 </div>
+
+
+
+
+
+
+
+
 
 <div class="section">
 
-<h2>Cadastrar Perfume</h2>
 
-<input
-id="nomePerfume"
-placeholder="Nome do perfume">
 
-<input
-id="tipoPerfume"
-placeholder="Tipo (Black, Gold...)">
 
-<input
-id="marcaPerfume"
-placeholder="Marca">
 
-<select id="categoriaPerfume">
+<h2>💄 Perfumes</h2>
 
-<option>Masculino</option>
-<option>Feminino</option>
-<option>Unissex</option>
-<option>Body Splash</option>
 
-</select>
 
-<input
-id="quantidadePerfume"
-type="number"
-placeholder="Quantidade Comprada">
 
-<button
-class="btn"
-onclick="adicionarPerfume()">
 
-Adicionar Perfume
+<input id="nome" placeholder="Nome">
+
+
+
+<input id="compra" type="number" placeholder="Compra">
+
+
+
+<input id="venda" type="number" placeholder="Venda">
+
+
+
+<input id="estoque" type="number" placeholder="Estoque">
+
+
+
+
+
+<button onclick="addPerfume()">
+
+Adicionar / Somar
 
 </button>
 
-</div>
-<div class="section">
 
-<h2>Perfumes em Estoque</h2>
+
+
+
+
 
 <table>
 
+
+
 <thead>
 
+
+
 <tr>
+
+
+
 <th>Nome</th>
-<th>Tipo</th>
-<th>Marca</th>
-<th>Categoria</th>
+
+<th>Compra</th>
+
+<th>Venda</th>
+
+<th>Lucro</th>
+
 <th>Estoque</th>
+
+<th>Ação</th>
+
+
+
 </tr>
+
+
 
 </thead>
 
-<tbody id="listaPerfumes">
 
-</tbody>
+
+
+
+<tbody id="perfumes"></tbody>
+
+
+
+
 
 </table>
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
+
 
 <div class="section">
 
-<h2>Cadastrar Cliente</h2>
 
-<input
-id="nomeCliente"
-placeholder="Nome do Cliente">
 
-<input
-id="telefoneCliente"
-placeholder="Telefone">
 
-<input
-id="instagramCliente"
-placeholder="Instagram">
 
-<button
-class="btn"
-onclick="adicionarCliente()">
+<h2>👤 Clientes</h2>
 
-Adicionar Cliente
+
+
+
+
+<input id="nomeC" placeholder="Nome">
+
+
+
+<input id="telefone" placeholder="Telefone">
+
+
+
+<input id="parcelas" type="number" placeholder="Parcelas">
+
+
+
+<input id="dataPagamento" type="date">
+
+
+
+
+
+<button onclick="addCliente()">
+
+Adicionar
 
 </button>
 
-</div>
 
-<div class="section">
 
-<h2>Clientes</h2>
+
+
+
 
 <table>
 
+
+
 <thead>
 
+
+
 <tr>
+
+
+
 <th>Nome</th>
-<th>Telefone</th>
-<th>Instagram</th>
+
+<th>Gasto</th>
+
+<th>Pago</th>
+
+<th>Dívida</th>
+
+<th>Status</th>
+
+<th>Ação</th>
+
+
+
 </tr>
+
+
 
 </thead>
 
-<tbody id="listaClientes">
 
-</tbody>
+
+
+
+<tbody id="clientes"></tbody>
+
+
+
+
 
 </table>
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
+
 
 <div class="section">
 
-<h2>Registrar Venda</h2>
 
-<select id="clienteVenda">
 
-<option value="">
-Selecione um cliente
-</option>
 
-</select>
 
-<select id="perfumeVenda">
+<h2>🛒 Venda</h2>
 
-<option value="">
-Selecione um perfume
-</option>
 
-</select>
 
-<input
-type="number"
-id="quantidadeVenda"
-placeholder="Quantidade">
 
-<button
-class="btn"
-onclick="registrarVenda()">
 
-Registrar Venda
+<select id="clienteSelect"></select>
+
+
+
+<select id="perfumeSelect"></select>
+
+
+
+
+
+<input id="qtd" type="number" placeholder="Quantidade">
+
+
+
+
+
+<button onclick="vender()">
+
+Vender
 
 </button>
 
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
+
 
 <div class="section">
 
-<h2>Histórico de Vendas</h2>
 
-<table>
 
-<thead>
 
-<tr>
-<th>Cliente</th>
-<th>Perfume</th>
-<th>Quantidade</th>
-<th>Data</th>
-</tr>
 
-</thead>
+<h2>💵 Pagamento</h2>
 
-<tbody id="historicoVendas">
 
-</tbody>
 
-</table>
+
+
+<select id="clientePay"></select>
+
+
+
+
+
+<input id="valorPay" type="number" placeholder="Valor">
+
+
+
+
+
+<button onclick="pagar()">
+
+
+
+Registrar
+
+
+
+</button>
+
+
+
+
 
 </div>
+
 <script>
 
-let perfumes =
-JSON.parse(
-localStorage.getItem("perfumes")
-) || [];
 
-let clientes =
-JSON.parse(
-localStorage.getItem("clientes")
-) || [];
 
-let vendas =
-JSON.parse(
-localStorage.getItem("vendas")
-) || [];
 
-function salvarDados(){
 
-localStorage.setItem(
-"perfumes",
-JSON.stringify(perfumes)
-);
+// FIREBASE DAFER PARFUM
 
-localStorage.setItem(
-"clientes",
-JSON.stringify(clientes)
-);
 
-localStorage.setItem(
-"vendas",
-JSON.stringify(vendas)
-);
+
+const firebaseConfig = {
+
+
+
+apiKey: "AIzaSyDRDC38Z-gln6hAvK4xtkAYij5_M2TvYRk",
+
+
+
+authDomain: "dafer-2d4af.firebaseapp.com",
+
+
+
+projectId: "dafer-2d4af",
+
+
+
+storageBucket: "dafer-2d4af.firebasestorage.app",
+
+
+
+messagingSenderId: "1043309416391",
+
+
+
+appId: "1:1043309416391:web:477f1eb8681cf5428c93e2"
+
+
+
+};
+
+
+
+
+
+
+
+firebase.initializeApp(firebaseConfig);
+
+
+
+
+
+const db = firebase.firestore();
+
+
+
+
+
+
+
+let clientes=[];
+
+
+
+let perfumes=[];
+
+
+
+
+
+
+
+function formatDate(d){
+
+
+
+if(!d) return "-";
+
+
+
+let [y,m,day]=d.split("-");
+
+
+
+return `${day}/${m}`;
+
+
 
 }
 
-function atualizarDashboard(){
 
-document.getElementById(
-"totalPerfumes"
-).innerText =
-perfumes.length;
 
-document.getElementById(
-"totalClientes"
-).innerText =
-clientes.length;
 
-let estoqueTotal = 0;
-let vendidosTotal = 0;
 
-perfumes.forEach(p=>{
 
-estoqueTotal += p.estoque;
-vendidosTotal += p.vendidos;
+
+
+
+
+
+// ADICIONAR PERFUME
+
+
+
+function addPerfume(){
+
+
+
+
+
+let n=nome.value.trim();
+
+
+
+
+
+if(!n)return;
+
+
+
+
+
+
+
+db.collection("perfumes")
+
+
+
+.where("nome","==",n)
+
+
+
+.get()
+
+
+
+.then(snapshot=>{
+
+
+
+
+
+if(!snapshot.empty){
+
+
+
+
+
+snapshot.forEach(doc=>{
+
+
+
+
+
+let p=doc.data();
+
+
+
+
+
+
+
+db.collection("perfumes")
+
+
+
+.doc(doc.id)
+
+
+
+.update({
+
+
+
+estoque:p.estoque + Number(estoque.value)
+
+
 
 });
 
-document.getElementById(
-"totalEstoque"
-).innerText =
-estoqueTotal;
 
-document.getElementById(
-"totalVendidos"
-).innerText =
-vendidosTotal;
 
-}
 
-function adicionarPerfume(){
 
-const nome =
-document.getElementById(
-"nomePerfume"
-).value;
+});
 
-const tipo =
-document.getElementById(
-"tipoPerfume"
-).value;
 
-const marca =
-document.getElementById(
-"marcaPerfume"
-).value;
 
-const categoria =
-document.getElementById(
-"categoriaPerfume"
-).value;
 
-const quantidade =
-parseInt(
-document.getElementById(
-"quantidadePerfume"
-).value
-);
 
-if(!nome || !quantidade){
 
-alert(
-"Preencha os campos obrigatórios"
-);
 
-return;
+}else{
 
-}
 
-perfumes.push({
 
-id:Date.now(),
 
-nome,
 
-tipo,
+db.collection("perfumes").add({
 
-marca,
 
-categoria,
 
-estoque:quantidade,
+nome:n,
+
+
+
+compra:Number(compra.value),
+
+
+
+venda:Number(venda.value),
+
+
+
+estoque:Number(estoque.value),
+
+
 
 vendidos:0
 
+
+
 });
 
-salvarDados();
 
-renderizarPerfumes();
 
-atualizarSelectPerfumes();
 
-document.getElementById(
-"nomePerfume"
-).value = "";
-
-document.getElementById(
-"tipoPerfume"
-).value = "";
-
-document.getElementById(
-"marcaPerfume"
-).value = "";
-
-document.getElementById(
-"quantidadePerfume"
-).value = "";
 
 }
 
-function adicionarCliente(){
 
-const nome =
-document.getElementById(
-"nomeCliente"
-).value;
 
-const telefone =
-document.getElementById(
-"telefoneCliente"
-).value;
 
-const instagram =
-document.getElementById(
-"instagramCliente"
-).value;
 
-if(!nome){
+});
 
-alert("Digite o nome");
 
-return;
+
+
+
+
 
 }
+
+
+
+
+
+
+
+
+
+
+
+function deletePerfume(id){
+
+
+
+db.collection("perfumes").doc(id).delete();
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// CLIENTES
+
+
+
+
+
+function addCliente(){
+
+
+
+
+
+db.collection("clientes").add({
+
+
+
+
+
+nome:nomeC.value,
+
+
+
+
+
+telefone:telefone.value,
+
+
+
+
+
+parcelas:Number(parcelas.value),
+
+
+
+
+
+dataPagamento:dataPagamento.value,
+
+
+
+
+
+gasto:0,
+
+
+
+
+
+pago:0
+
+
+
+
+
+});
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function deleteCliente(id){
+
+
+
+
+
+db.collection("clientes")
+
+
+
+.doc(id)
+
+
+
+.delete();
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// VENDA
+
+
+
+
+
+function vender(){
+
+
+
+
+
+let c=clientes[clienteSelect.value];
+
+
+
+let p=perfumes[perfumeSelect.value];
+
+
+
+
+
+let q=Number(qtd.value);
+
+
+
+
+
+
+
+if(!c || !p || !q)return;
+
+
+
+
+
+
+
+db.collection("clientes")
+
+
+
+.doc(c.id)
+
+
+
+.update({
+
+
+
+
+
+gasto:c.gasto + (q*p.venda)
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+db.collection("perfumes")
+
+
+
+.doc(p.id)
+
+
+
+.update({
+
+
+
+
+
+estoque:p.estoque-q,
+
+
+
+
+
+vendidos:(p.vendidos||0)+q
+
+
+
+
+
+});
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// PAGAMENTO
+
+
+
+
+
+function pagar(){
+
+
+
+
+
+let c=clientes[clientePay.value];
+
+
+
+
+
+let valor=Number(valorPay.value);
+
+
+
+
+
+
+
+if(!c)return;
+
+
+
+
+
+
+
+db.collection("clientes")
+
+
+
+.doc(c.id)
+
+
+
+.update({
+
+
+
+
+
+pago:c.pago+valor
+
+
+
+
+
+});
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// CARREGAR CLIENTES
+
+
+
+
+
+db.collection("clientes")
+
+
+
+.onSnapshot(snapshot=>{
+
+
+
+
+
+clientes=[];
+
+
+
+
+
+snapshot.forEach(doc=>{
+
+
+
+
 
 clientes.push({
 
-id:Date.now(),
 
-nome,
 
-telefone,
+id:doc.id,
 
-instagram
+
+
+...doc.data()
+
+
 
 });
 
-salvarDados();
 
-renderizarClientes();
 
-atualizarSelectClientes();
 
-document.getElementById(
-"nomeCliente"
-).value = "";
 
-document.getElementById(
-"telefoneCliente"
-).value = "";
+});
 
-document.getElementById(
-"instagramCliente"
-).value = "";
 
-}
 
-function renderizarPerfumes(){
 
-const tabela =
-document.getElementById(
-"listaPerfumes"
-);
 
-tabela.innerHTML = "";
+render();
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CARREGAR PERFUMES
+
+
+
+
+
+db.collection("perfumes")
+
+
+
+.onSnapshot(snapshot=>{
+
+
+
+
+
+perfumes=[];
+
+
+
+
+
+snapshot.forEach(doc=>{
+
+
+
+
+
+perfumes.push({
+
+
+
+id:doc.id,
+
+
+
+...doc.data()
+
+
+
+});
+
+
+
+
+
+});
+
+
+
+
+
+render();
+
+
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function render(){
+
+
+
+
+
+
+
+perfumesEl.innerHTML="";
+
+
+
+
+
+clientesEl.innerHTML="";
+
+
+
+
+
+clienteSelect.innerHTML="";
+
+
+
+
+
+clientePay.innerHTML="";
+
+
+
+
+
+perfumeSelect.innerHTML="";
+
+
+
+
+
+
+
+let lucro=0;
+
+
+
+
+
+let faturado=0;
+
+
+
+
+
+
+
+
+
+
 
 perfumes.forEach(p=>{
 
-tabela.innerHTML += `
+
+
+
+
+let l=p.venda-p.compra;
+
+
+
+
+
+
+
+lucro += l*(p.vendidos||0);
+
+
+
+
+
+faturado += p.venda*(p.vendidos||0);
+
+
+
+
+
+
+
+
+
+perfumesEl.innerHTML += `
+
+
+
+
 
 <tr>
+
+
 
 <td>${p.nome}</td>
 
-<td>${p.tipo}</td>
 
-<td>${p.marca}</td>
 
-<td>${p.categoria}</td>
+<td>R$ ${p.compra}</td>
+
+
+
+<td>R$ ${p.venda}</td>
+
+
+
+<td>R$ ${l}</td>
+
+
+
+<td>${p.estoque}</td>
+
+
+
+
 
 <td>
-<span class="badge">
-${p.estoque}
-</span>
+
+
+
+<button class="delete"
+
+
+
+onclick="deletePerfume('${p.id}')">
+
+
+
+X
+
+
+
+</button>
+
+
+
 </td>
+
+
+
+
 
 </tr>
 
+
+
+
+
 `;
+
+
+
+
+
+
+
+
+
+perfumeSelect.innerHTML += `
+
+
+
+
+
+<option value="${perfumes.indexOf(p)}">
+
+
+
+${p.nome}
+
+
+
+</option>
+
+
+
+
+
+`;
+
+
+
+
+
+
 
 });
 
-atualizarDashboard();
 
-}
 
-function renderizarClientes(){
 
-const tabela =
-document.getElementById(
-"listaClientes"
-);
 
-tabela.innerHTML = "";
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 clientes.forEach(c=>{
 
-tabela.innerHTML += `
+
+
+
+
+let divida=c.gasto-c.pago;
+
+
+
+
+
+
+
+clientesEl.innerHTML += `
+
+
+
+
 
 <tr>
+
+
+
+
 
 <td>${c.nome}</td>
 
-<td>${c.telefone}</td>
 
-<td>${c.instagram}</td>
+
+
+
+<td>R$ ${c.gasto}</td>
+
+
+
+
+
+<td>R$ ${c.pago}</td>
+
+
+
+
+
+<td>R$ ${divida}</td>
+
+
+
+
+
+<td class="${divida>0?'devedor':'ok'}">
+
+
+
+${divida>0?'🔴 Devendo':'🟢 Pago'}
+
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+
+
+
+<button class="delete"
+
+
+
+onclick="deleteCliente('${c.id}')">
+
+
+
+X
+
+
+
+</button>
+
+
+
+
+
+</td>
+
+
+
+
 
 </tr>
 
-`;
 
-});
 
-atualizarDashboard();
 
-}
-function atualizarSelectPerfumes(){
-
-const select =
-document.getElementById(
-"perfumeVenda"
-);
-
-select.innerHTML =
-'<option value="">Selecione um perfume</option>';
-
-perfumes.forEach(p=>{
-
-if(p.estoque > 0){
-
-select.innerHTML += `
-
-<option value="${p.id}">
-
-${p.nome} - ${p.tipo}
-(Estoque: ${p.estoque})
-
-</option>
 
 `;
 
-}
 
-});
 
-}
 
-function atualizarSelectClientes(){
 
-const select =
-document.getElementById(
-"clienteVenda"
-);
 
-select.innerHTML =
-'<option value="">Selecione um cliente</option>';
 
-clientes.forEach(c=>{
 
-select.innerHTML += `
 
-<option value="${c.id}">
+
+
+
+
+clienteSelect.innerHTML += `
+
+
+
+
+
+<option value="${clientes.indexOf(c)}">
+
+
 
 ${c.nome}
 
+
+
 </option>
 
-`;
 
-});
 
-}
 
-function registrarVenda(){
-
-const clienteId =
-Number(
-document.getElementById(
-"clienteVenda"
-).value
-);
-
-const perfumeId =
-Number(
-document.getElementById(
-"perfumeVenda"
-).value
-);
-
-const quantidade =
-parseInt(
-document.getElementById(
-"quantidadeVenda"
-).value
-);
-
-if(
-!clienteId ||
-!perfumeId ||
-!quantidade
-){
-
-alert(
-"Preencha todos os campos"
-);
-
-return;
-
-}
-
-const perfume =
-perfumes.find(
-p=>p.id === perfumeId
-);
-
-const cliente =
-clientes.find(
-c=>c.id === clienteId
-);
-
-if(
-quantidade > perfume.estoque
-){
-
-alert(
-"Estoque insuficiente"
-);
-
-return;
-
-}
-
-perfume.estoque -= quantidade;
-
-perfume.vendidos += quantidade;
-
-vendas.push({
-
-cliente:cliente.nome,
-
-perfume:
-perfume.nome +
-" - " +
-perfume.tipo,
-
-quantidade,
-
-data:
-new Date()
-.toLocaleDateString(
-"pt-BR"
-)
-
-});
-
-salvarDados();
-
-renderizarPerfumes();
-
-renderizarHistorico();
-
-atualizarSelectPerfumes();
-
-document.getElementById(
-"quantidadeVenda"
-).value = "";
-
-}
-
-function renderizarHistorico(){
-
-const tabela =
-document.getElementById(
-"historicoVendas"
-);
-
-tabela.innerHTML = "";
-
-vendas.forEach(v=>{
-
-tabela.innerHTML += `
-
-<tr>
-
-<td>${v.cliente}</td>
-
-<td>${v.perfume}</td>
-
-<td>${v.quantidade}</td>
-
-<td>${v.data}</td>
-
-</tr>
 
 `;
 
+
+
+
+
+
+
+
+
+
+
+clientePay.innerHTML += `
+
+
+
+
+
+<option value="${clientes.indexOf(c)}">
+
+
+
+${c.nome}
+
+
+
+</option>
+
+
+
+
+
+`;
+
+
+
+
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+document.getElementById("totalFaturado").innerText =
+
+
+
+"R$ "+faturado.toFixed(2);
+
+
+
+
+
+
+
+document.getElementById("totalLucro").innerText =
+
+
+
+"R$ "+lucro.toFixed(2);
+
+
+
+
+
+
+
+document.getElementById("totalDizimo").innerText =
+
+
+
+"R$ "+(lucro*0.1).toFixed(2);
+
+
+
+
+
+
 
 }
 
-renderizarPerfumes();
 
-renderizarClientes();
 
-renderizarHistorico();
 
-atualizarSelectPerfumes();
 
-atualizarSelectClientes();
+
+
+
+
+
+
+
+
+const perfumesEl=document.getElementById("perfumes");
+
+
+
+
+
+const clientesEl=document.getElementById("clientes");
+
+
+
+
+
+
 
 </script>
 
-</div>
+
+
+
 
 </body>
+
+
 
 </html>
